@@ -14,7 +14,7 @@ import discord
 # 2. To install nodemon: sudo npm i -g nodemon
 # 3: To run the file: nodemon --exec python3 bottemplate.py
 
-discordToken = "MTMyNjgzNDA5MTQzMzI2NzI4MQ.GIrljD.yNpvyHDfHpOEpUp-0AekKh_fkbLtuj6cvwUUhE"  # Your bot token here (https://discord.com/developers/applications/ and tab Bot -> Token -> Reset Token -> Copy the token here)
+discordToken = ""  # Your bot token here (https://discord.com/developers/applications/ and tab Bot -> Token -> Reset Token -> Copy the token here)
 name = "csm101_israel_biringanine"  # Your bot name here
 
 
