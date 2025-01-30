@@ -1,5 +1,7 @@
 import sys
 import random
+import os
+from dotenv import load_dotenv
 
 # To use this package, install: pip3 install discord.py
 
@@ -13,8 +15,9 @@ import discord
 #    sudo apt install npm
 # 2. To install nodemon: sudo npm i -g nodemon
 # 3: To run the file: nodemon --exec python3 bottemplate.py
+load_dotenv()
 
-discordToken = ""  # Your bot token here (https://discord.com/developers/applications/ and tab Bot -> Token -> Reset Token -> Copy the token here)
+discordToken = os.getenv("DISCORD_TOKEN")
 name = "csm101_israel_biringanine"  # Your bot name here
 
 
@@ -58,6 +61,19 @@ def remove_from_dictionary(dictionary, term):
         return "I do not know that"
 
 
+def todo_remove(todo_key, dictionary):
+
+    try:
+        index = int(todo_key)
+        if index in dictionary.keys():
+            del dictionary[index]
+            return "item removed"
+        else:
+            return "No item in this number"
+    except ValueError:
+        return "Invalid input. Enter a number"
+
+
 def get_from_dictionary(dictionary, term):
     """gets a term and then gives the value
 
@@ -70,6 +86,7 @@ def get_from_dictionary(dictionary, term):
 
     if term in dictionary:
         return dictionary[term]
+
     else:
         return "I do not know this"
 
@@ -79,6 +96,7 @@ def add_todo(dictionary, item_key, item_value):
         if item_value in dictionary.values():
             return "item aready exists in the dictionary"
         else:
+
             dictionary[item_key] = item_value
             return dictionary
     else:
@@ -180,15 +198,30 @@ async def on_message(message):
                         await message.channel.send(f"{key}: {value}")
 
             elif len(list_message) > 1:
-                length = len(todos) + 1
-                response = add_todo(todos, length, " ".join(list_message[1:]))
+                highest_key = 0
+                for k in todos.keys():
+                    if k > highest_key:
+                        highest_key = k
+
+                response = add_todo(todos, highest_key + 1, " ".join(list_message[1:]))
                 await message.channel.send(response)
+
+        if list_message[0] == "todoremove":
+            response = todo_remove(list_message[1], todos)
+            await message.channel.send(response)
+
         if list_message[0] == "help":
             commands = [
-                "here are the commands:",
+                "Here are the commands:",
                 "random <first> <last> - generates a random number between the first and last number",
-                "random <first> <second> <third> - generates a list of random numbers between the first and second number based on the side of the third number",
+                "random <first> <second> <third> - generates a list of random numbers between the first and second number based on the size of the third number",
                 "sum <first> <second> - sums the first and second number",
+                "set <term> <definition> - saves the term with the given definition (replaces the definition if the term exists)",
+                "get <term> - retrieves the definition for the given term, or 'I do not know this' if the term does not exist",
+                "set <term> - removes the term from the dictionary if it exists",
+                "todo <todo item> - adds a new todo item to the list (maximum of 5 items allowed)",
+                "todo - displays all todo items or 'No todo items' if the list is empty",
+                "todoremove <number> - removes the todo item with the given number or displays 'No item with this number' if it doesn't exist",
             ]
 
             [await message.channel.send(f"{command} ") for command in commands]
